@@ -1,20 +1,14 @@
-// para rodar o projeto
-// primeiro npm install e depois npm run start
-
-const { Sequelize, DataTypes } = require("sequelize");
+const { Sequelize, DataTypes, INTEGER } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 
-// configirando conexão sqlite
 const conn = new Sequelize({
     dialect: "sqlite",
-    storage: "./db.sqlite"
+    storage: "./db.sqlite",
 });
 
-// validar conexão com o arquivo e se ela existir conectar
 conn.authenticate()
     .then(async () => {
-        // lendo arquivo script.sql e persistindo no banco
         const dir = path.resolve(__dirname, "script.sql");
         const sqlCommand = fs.readFileSync(dir).toString("ascii");
 
@@ -22,53 +16,83 @@ conn.authenticate()
         await start();
     });
 
-// criar um modelo
+
+
 const model = conn.define("UserModel", {
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true
+    },
     name: {
         type: DataTypes.TEXT,
         allowNull: false
+    },
+    born_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    nickname: {
+        type: DataTypes.STRING,
+        defaultValue: ''
     }
-    // TODO: definir os atributos 
 }, {
-    // configurando a tabela
-    timestamps: false, // não estamos usando os campos createdAt, updatedAt
-    tableName: "usuario", // configuranod o nome da tabela
-    underscored: true  // estamos usando os campos no banco com underscore
+    timestamps: false,
+    tableName: "usuario",
+    underscored: true
 }); 
 
+
+
 const find = async () => {
-    // TODO: implementar
     return await model.findAll();
 }
 
 const create = async (user) => {
-    // TODO: implementar
-    model.create
+    model.create(user)
 }
 
 const findByPk = async (id) => {
-    // TODO: implementar
-    model.findByPk
+    return await model.findByPk(id)
 }
 
 const update = async (pk, user) => {
-    // TODO: implementar
-    model.update
+    const model = await findByPk(pk)
+    await model.update(user)
 }
 
 const deleteById = async (pk) => {
-    // TODO: implementar
-    model.destroy
+    const model = await findByPk(pk)
+    await model.destroy()
+    return await find()
 }
 
-// chamadas para essas funções
+
 
 const start = async () => {
-    // colocar chamadas de função aqui!
+    user = {
+        name: "Joao",
+        born_date: "2003-11-10T03:00:00.000Z"
+    }
 
-    // testando função findall 
+    // create(user);
 
-    const allUsers = await find();
-    console.info(allUsers); 
+    // update(1, user);
+    
+    // console.info(destroy);
+
+    // const singleUser = await findByPk(1)
+    // console.info(singleUser); 
+
+    // const allUsers = await find();
+    // console.info(allUsers); 
 }
 
+
+
+/** Grupo
+ * @JoaoVitorDeOliveiraMendes
+ * @PetronioFaleixo
+ * @AndreCalebe
+ */
